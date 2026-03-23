@@ -243,6 +243,48 @@ XYZ AS (
 ### 📊 Результаты XYZ-анализа
 ![XYZ-анализ](https://drive.google.com/uc?export=view&id=1WY4fIULUVD0CbfvJGOPb7fOu2MmLGQ54)
 
+# ABC-XYZ анализ ассортимента пиццерии (SQL)
+ **Объединим наши запросы**
+```sql
+select 
+    ABC.name as name,
+    CONCAT(
+    abc_kolvo,
+    abc_revenue,
+    xyz
+    ) as abc_xyz
+from  ABC join XYZ on XYZ.name = ABC.name
+order by abc_xyz
+```
 
 ### 📉 Результаты ABC-XYZ анализа
 ![ABC-XYZ анализ](https://drive.google.com/uc?export=view&id=1l7R9KrgH5HJo_UPwOz9eGiWw9zdElcLd)
+
+### Выводы
+
+- Основная часть ассортимента сосредоточена в категории `A`, что говорит о высокой концентрации выручки и продаж в ограниченном числе позиций.
+
+- Значительная доля пицц относится к категории `X`, что указывает на стабильный и предсказуемый спрос.
+
+- Комбинации `AAX` и `AAY` формируют ядро ассортимента — это наиболее ценные и относительно стабильные товары, на которые стоит делать основной упор.
+
+- В топ ассортимента (категория `AAX`) входят наиболее значимые и стабильные позиции:
+  `The Italian Capocollo Pizza`, `The Italian Supreme Pizza`, `The California Chicken Pizza`,  
+  `The Sicilian Pizza`, `The Napolitana Pizza`, `The Pepper Salami Pizza`,  
+  `The Prosciutto and Arugula Pizza`, `The Classic Deluxe Pizza`,  
+  `The Thai Chicken Pizza`, `The Four Cheese Pizza`,  
+  `The Barbecue Chicken Pizza`, `The Southwest Chicken Pizza`, `The Hawaiian Pizza`.
+
+- Эти позиции формируют основную выручку и обладают стабильным спросом, поэтому являются ключевыми для бизнеса.
+
+- В зону менее стабильных, но всё ещё значимых товаров (`AAY`, `AAZ`) попадают:
+  `The Pepperoni Pizza`, `The Spicy Italian Pizza`, `The Big Meat Pizza`,  
+  `The Vegetables + Vegetables Pizza`, `The Mexicana Pizza`.
+
+- Позиции из категорий `B` и `C`, особенно с `Z` (например, `CCZ`), такие как:
+  `The Brie Carre Pizza`, `The Mediterranean Pizza`, `The Spinach Supreme Pizza`,  
+  характеризуются низким вкладом в выручку и нестабильным спросом.
+
+- Такие товары могут рассматриваться для оптимизации ассортимента или замены.
+
+- В целом ассортимент имеет выраженное ядро из стабильных и прибыльных позиций, что упрощает управление запасами и прогнозирование.
