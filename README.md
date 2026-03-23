@@ -4,6 +4,10 @@
 
 Провести ABC-анализ ассортимента пиццерии по наименованиям пицц на основе количества продаж и выручки для выявления наиболее и наименее значимых товаров.
 
+## Реализация
+
+Код представлен в файле `ABC-XYZ_analysis.sql`.
+
 ## Исходные данные
 
 **Таблица:** `pizza_sales`
@@ -160,3 +164,7 @@ FROM abc
 GROUP BY combined_category
 ORDER BY combined_category;
 ```
+
+### 📉 Результаты ABC-XYZ анализа
+
+![ABC-XYZ анализ](https://drive.google.com/uc?export=view&id=1l7R9KrgH5HJo_UPwOz9eGiWw9zdElcLd)
