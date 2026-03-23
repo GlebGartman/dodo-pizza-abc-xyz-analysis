@@ -139,7 +139,7 @@ abc AS (
 )
 ```
 
-**📊 ОСНОВНОЙ ОТЧЕТ**
+**4. ОСНОВНОЙ ОТЧЕТ**
 
 ```sql
 SELECT
@@ -152,7 +152,7 @@ FROM abc
 ORDER BY total_revenue DESC;
 ```
 
-**📊 СВОДКА ПО КОМБИНАЦИЯМ**
+**5. СВОДКА ПО КОМБИНАЦИЯМ**
 
 ```sql
 SELECT
@@ -165,15 +165,83 @@ GROUP BY combined_category
 ORDER BY combined_category;
 ```
 ### 📊 Результаты ABC-анализа
-
-
-
-
-
-
 ![ABC-анализ](https://drive.google.com/uc?export=view&id=13-VqO9U4hpWdZTZNt-pE5ZDLpI7_6uhm)
+
+
+### Параметры анализа
+
+**Пороги классификации (по коэффициенту вариации):**
+- Категория X — коэффициент вариации ≤ 0.1  
+- Категория Y — 0.1 < коэффициент вариации ≤ 0.12  
+- Категория Z — коэффициент вариации > 0.12  
+
+---
+
+### Ключевые показатели
+
+- **Среднее значение** — среднемесячное количество продаж  
+- **Стандартное отклонение** — разброс продаж  
+- **Коэффициент вариации (CV)** — `std / mean`  
+
+---
+
+## Требуемые результаты
+
+### 1. Основной отчет XYZ-анализа
+
+- `pizza_name` — наименование пиццы  
+- `variation_coefficient` — коэффициент вариации  
+- `xyz_category` — категория XYZ:
+  - X — стабильные продажи  
+  - Y — переменные продажи  
+  - Z — нестабильные продажи  
+
+---
+
+# XYZ-анализ ассортимента пиццерии (SQL)
+
+## Описание
+
+XYZ-анализ ассортимента пиццерии по наименованиям пицц для оценки стабильности спроса на основе вариативности продаж с целью оптимизации управления запасами и повышения точности прогнозирования.
+
+## SQL-реализация
+
+**1. Агрегация продаж по месяцам**
+
+```sql
+kolvo_pizz_mes AS (
+
+    SELECT 
+        name,
+        DATE_PART('month', date) AS month,
+        SUM(quantity) AS kolvo
+    FROM pizza_full_data
+    WHERE DATE_PART('year', date) = 2015
+    GROUP BY 1, 2
+    ORDER BY name
+),
+```
+
+**2. Присвоение XYZ-категорий**
+
+```sql
+XYZ AS (
+
+    SELECT
+        name,
+        CASE 
+            WHEN STDDEV_POP(kolvo) / AVG(kolvo) <= 0.1 THEN 'X'
+            WHEN STDDEV_POP(kolvo) / AVG(kolvo) <= 0.12 THEN 'Y'
+            ELSE 'Z'
+        END AS xyz
+    FROM kolvo_pizz_mes
+    GROUP BY name
+    ORDER BY xyz
+)
+```
+### 📊 Результаты XYZ-анализа
+![XYZ-анализ](https://drive.google.com/uc?export=view&id=1WY4fIULUVD0CbfvJGOPb7fOu2MmLGQ54)
+
+
 ### 📉 Результаты ABC-XYZ анализа
-
-
-
 ![ABC-XYZ анализ](https://drive.google.com/uc?export=view&id=1l7R9KrgH5HJo_UPwOz9eGiWw9zdElcLd)
