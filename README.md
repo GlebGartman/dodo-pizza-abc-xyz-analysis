@@ -91,9 +91,10 @@ WITH base AS (
     FROM pizza_sales
     GROUP BY name
 ),
-
+```
+-- ===== 2. Расчет долей и кумулятивных значений =====
 calc AS (
-    -- ===== 2. Расчет долей и кумулятивных значений =====
+    
     SELECT
         *,
         total_units_sold * 1.0 / SUM(total_units_sold) OVER() AS share_units,
