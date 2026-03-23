@@ -70,5 +70,83 @@
 
 - `combined_category` — комбинированная категория
 - `number_of_pizzas` — количество пицц в каждой комбинации
+
+# ABC-анализ ассортимента пиццерии (SQL)
+
+## Описание
+
+ABC-анализ ассортимента пиццерии по наименованиям пицц на основе количества продаж и выручки для выявления наиболее и наименее значимых товаров.
+
+---
+
+## SQL-реализация
+
+```sql
+WITH base AS (
+    -- ===== 1. Агрегация по пиццам =====
+    SELECT
+        name AS pizza_name,
+        SUM(quantity) AS total_units_sold,
+        SUM(revenue) AS total_revenue
+    FROM pizza_sales
+    GROUP BY name
+),
+
+calc AS (
+    -- ===== 2. Расчет долей и кумулятивных значений =====
+    SELECT
+        *,
+        total_units_sold * 1.0 / SUM(total_units_sold) OVER() AS share_units,
+        total_revenue * 1.0 / SUM(total_revenue) OVER() AS share_revenue,
+        
+        SUM(total_units_sold) OVER(ORDER BY total_units_sold DESC) * 1.0 
+            / SUM(total_units_sold) OVER() AS cum_share_units,
+            
+        SUM(total_revenue) OVER(ORDER BY total_revenue DESC) * 1.0 
+            / SUM(total_revenue) OVER() AS cum_share_revenue
+    FROM base
+),
+
+abc AS (
+    -- ===== 3. Присвоение ABC-категорий =====
+    SELECT
+        *,
+        CASE
+            WHEN cum_share_units <= 0.8 THEN 'A'
+            WHEN cum_share_units <= 0.95 THEN 'B'
+            ELSE 'C'
+        END AS abc_category_by_units,
+
+        CASE
+            WHEN cum_share_revenue <= 0.8 THEN 'A'
+            WHEN cum_share_revenue <= 0.95 THEN 'B'
+            ELSE 'C'
+        END AS abc_category_by_revenue
+    FROM calc
+)
+
+-- =========================
+-- 📊 ОСНОВНОЙ ОТЧЕТ
+-- =========================
+SELECT
+    pizza_name,
+    total_units_sold,
+    total_revenue,
+    abc_category_by_units,
+    abc_category_by_revenue
+FROM abc
+ORDER BY total_revenue DESC;
+
+-- =========================
+-- 📊 СВОДКА ПО КОМБИНАЦИЯМ
+-- =========================
+SELECT
+    CONCAT(abc_category_by_units, abc_category_by_revenue) AS combined_category,
+    COUNT(*) AS number_of_pizzas,
+    SUM(total_units_sold) AS total_units_sold,
+    SUM(total_revenue) AS total_revenue
+FROM abc
+GROUP BY combined_category
+ORDER BY combined_category;
 - `total_units_sold` — общий объем продаж в каждой комбинации
 - `total_revenue` — общая выручка в каждой комбинации
