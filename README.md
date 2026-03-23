@@ -70,7 +70,9 @@
 
 - `combined_category` — комбинированная категория
 - `number_of_pizzas` — количество пицц в каждой комбинации
-
+- `total_units_sold` — общий объем продаж в каждой комбинации
+- `total_revenue` — общая выручка в каждой комбинации
+- 
 # ABC-анализ ассортимента пиццерии (SQL)
 
 ## Описание
@@ -81,9 +83,11 @@ ABC-анализ ассортимента пиццерии по наименов
 
 ## SQL-реализация
 
+**1. Агрегация по пиццам**
+
 ```sql
 WITH base AS (
-    -- ===== 1. Агрегация по пиццам =====
+
     SELECT
         name AS pizza_name,
         SUM(quantity) AS total_units_sold,
@@ -92,7 +96,8 @@ WITH base AS (
     GROUP BY name
 ),
 ```
--- ===== 2. Расчет долей и кумулятивных значений =====
+**2. Расчет долей и кумулятивных значений**
+```sql
 calc AS (
     
     SELECT
@@ -107,9 +112,12 @@ calc AS (
             / SUM(total_revenue) OVER() AS cum_share_revenue
     FROM base
 ),
+```
 
+ **3. Присвоение ABC-категорий**
+```sql
 abc AS (
-    -- ===== 3. Присвоение ABC-категорий =====
+
     SELECT
         *,
         CASE
@@ -125,10 +133,11 @@ abc AS (
         END AS abc_category_by_revenue
     FROM calc
 )
+```
 
--- =========================
--- 📊 ОСНОВНОЙ ОТЧЕТ
--- =========================
+**📊 ОСНОВНОЙ ОТЧЕТ**
+
+```sql
 SELECT
     pizza_name,
     total_units_sold,
@@ -137,10 +146,11 @@ SELECT
     abc_category_by_revenue
 FROM abc
 ORDER BY total_revenue DESC;
+```
 
--- =========================
--- 📊 СВОДКА ПО КОМБИНАЦИЯМ
--- =========================
+**📊 СВОДКА ПО КОМБИНАЦИЯМ**
+
+```sql
 SELECT
     CONCAT(abc_category_by_units, abc_category_by_revenue) AS combined_category,
     COUNT(*) AS number_of_pizzas,
@@ -149,5 +159,4 @@ SELECT
 FROM abc
 GROUP BY combined_category
 ORDER BY combined_category;
-- `total_units_sold` — общий объем продаж в каждой комбинации
-- `total_revenue` — общая выручка в каждой комбинации
+```
