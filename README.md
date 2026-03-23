@@ -167,8 +167,9 @@ ORDER BY combined_category;
 ### 📊 Результаты ABC-анализа
 ![ABC-анализ](https://drive.google.com/uc?export=view&id=13-VqO9U4hpWdZTZNt-pE5ZDLpI7_6uhm)
 
+---
 
-### Параметры анализа
+### Параметры XYZ-анализа
 
 **Пороги классификации (по коэффициенту вариации):**
 - Категория X — коэффициент вариации ≤ 0.1  
